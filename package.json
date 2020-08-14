@@ -12,7 +12,11 @@
     "license": "ISC",
     "dependencies": {
         "apollo-server": "^2.16.1",
-        "graphql": "^15.3.0"
+        "graphql": "^15.3.0",
+        "mysql2": "^2.1.0",
+        "pg": "^8.3.0",
+        "pg-hstore": "^2.3.3",
+        "sequelize": "^6.3.4"
     },
     "devDependencies": {
         "nodemon": "^2.0.4"
