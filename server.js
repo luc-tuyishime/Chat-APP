@@ -7,7 +7,8 @@ const { sequelize } = require("./models");
 
 const server = new ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,
+    context: (ctx) => ctx
 });
 
 server.listen().then(({ url }) => {
