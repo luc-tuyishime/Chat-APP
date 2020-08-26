@@ -1,28 +1,18 @@
 const bcrypt = require("bcryptjs");
-const { User } = require("../models");
+const { User } = require("../../models");
 const { UserInputError, AuthenticationError } = require("apollo-server");
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
 
-const { JWT_SECRET } = require("../config/env.json");
+const { JWT_SECRET } = require("../../config/env.json");
 
 // A map of functions which return data for the schema. (Handler of the routes)
 
 module.exports = {
     Query: {
-        getUsers: async (_, __, context) => {
+        getUsers: async (_, __, { user }) => {
             try {
-                let user;
-                if (context.req && context.req.headers.authorization) {
-                    const token = context.req.headers.authorization.split("Bearer ")[1];
-                    jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
-                        if (err) {
-                            throw new AuthenticationError("Unauthenticated ");
-                        }
-                        user = decodedToken;
-                        console.log("user", user);
-                    });
-                }
+                if (!user) throw new AuthenticationError("Unauthenticated");
 
                 const users = await User.findAll({
                     where: { username: { [Op.ne]: user.username } }
@@ -57,7 +47,7 @@ module.exports = {
                 const correctPassword = await bcrypt.compare(password, user.password);
                 if (!correctPassword) {
                     errors.password = "password is incorrect";
-                    throw new AuthenticationError("Password is incorrect", { errors });
+                    throw new UserInputError("Password is incorrect", { errors });
                 }
 
                 const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: "1h" });

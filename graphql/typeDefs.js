@@ -9,9 +9,18 @@ module.exports = gql`
         token: String
     }
 
+    type Message {
+        uuid: String!
+        content: String!
+        from: String!
+        to: String!
+        createdAt: String!
+    }
+
     type Query {
         getUsers: [User]!
         login(username: String!, password: String!): User!
+        getMessages(from: String!): [Message]!
     }
 
     type Mutation {
@@ -21,5 +30,14 @@ module.exports = gql`
             password: String!
             confirmPassword: String!
         ): User!
+        sendMessage(to: String!, content: String!): Message!
     }
 `;
+
+// "development-connection-appointment": {
+//     "username": "postgres",
+//     "password": "tuyishime",
+//     "database": "appointment",
+//     "host": "127.0.0.1",
+//     "dialect": "postgres"
+// }
