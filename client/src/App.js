@@ -8,6 +8,7 @@ import Login from "./pages/login";
 
 import ApolloProvider from "./ApolloProvider";
 import { AuthProvider } from "./context/auth";
+import DynamicRoute from "./util/dynamicRoute";
 
 import "./App.scss";
 
@@ -18,9 +19,9 @@ function App() {
                 <BrowserRouter>
                     <Container className="pt-5">
                         <Switch>
-                            <Route exact path="/" component={Home} />
-                            <Route path="/register" component={Register} />
-                            <Route path="/login" component={Login} />
+                            <DynamicRoute exact path="/" component={Home} authenticated />
+                            <DynamicRoute path="/register" component={Register} guest />
+                            <DynamicRoute path="/login" component={Login} guest />
                         </Switch>
                     </Container>
                 </BrowserRouter>

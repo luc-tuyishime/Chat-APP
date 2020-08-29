@@ -4,7 +4,7 @@ import jwtDecode from "jwt-decode";
 const AuthStateContext = createContext();
 const AuthDispatchContext = createContext();
 
-let user;
+let user = null;
 
 const token = localStorage.getItem("token");
 if (token) {
@@ -16,8 +16,6 @@ if (token) {
     } else {
         user = decodedToken;
     }
-
-    console.log("expiresAt", expiresAt);
 } else console.log("No token found");
 
 const authReducer = (state, action) => {
