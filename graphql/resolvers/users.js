@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const { User } = require("../../models");
+const { User, Message } = require("../../models");
 const { UserInputError, AuthenticationError } = require("apollo-server");
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
@@ -14,9 +14,28 @@ module.exports = {
             try {
                 if (!user) throw new AuthenticationError("Unauthenticated");
 
-                const users = await User.findAll({
+                let users = await User.findAll({
+                    attributes: ["username", "imageUrl", "createdAt"], // Avoid fetching email
                     where: { username: { [Op.ne]: user.username } }
                 });
+
+                const allUserMessages = await Message.findAll({
+                    where: {
+                        [Op.or]: [{ from: user.username }, { to: user.username }] // Sent message or received by the authenticated messages
+                    },
+                    order: [["createdAt", "DESC"]]
+                });
+
+                // Loop through all users and add latest message
+                users = users.map((otherUser) => {
+                    const latestMessage = allUserMessages.find(
+                        (m) =>
+                            m.from === otherUser.username || m.to === otherUser.username
+                    );
+                    otherUser.latestMessage = latestMessage;
+                    return otherUser;
+                });
+
                 return users;
             } catch (e) {
                 console.log(e);
